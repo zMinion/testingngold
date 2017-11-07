@@ -150,12 +150,23 @@ class nggAdminPanel{
 
 	// integrate the menu
 	function add_menu()  {
-
+		
+		if ( current_user_can('manage_options') ) { //IF added by szilard
 		add_menu_page( _n( 'Gallery', 'Galleries', 1, 'nggallery' ), _n( 'Gallery', 'Galleries', 1, 'nggallery' ), 'NextGEN Gallery overview', NGGFOLDER, array (&$this, 'show_menu'), path_join(NGGALLERY_URLPATH, 'admin/images/nextgen_16_color.png') );
 	    add_submenu_page( NGGFOLDER , __('Overview', 'nggallery'), __('Overview', 'nggallery'), 'NextGEN Gallery overview', NGGFOLDER, array (&$this, 'show_menu'));
 	    add_submenu_page( NGGFOLDER , __('Manage Galleries', 'nggallery'), __('Manage Galleries', 'nggallery'), 'NextGEN Manage gallery', 'nggallery-manage-gallery', array (&$this, 'show_menu'));
 	    add_submenu_page( NGGFOLDER , _n( 'Manage Albums', 'Albums', 1, 'nggallery' ), _n( 'Manage Albums', 'Manage Albums', 1, 'nggallery' ), 'NextGEN Edit album', 'nggallery-manage-album', array (&$this, 'show_menu'));
 	    add_submenu_page( NGGFOLDER , __('Manage Tags', 'nggallery'), __('Manage Tags', 'nggallery'), 'NextGEN Manage tags', 'nggallery-tags', array (&$this, 'show_menu'));
+		//added by szilard - BEGIN
+		}
+		else {
+		//error_log("mi az abra:".current_user_can('NextGEN Manage gallery'));
+	    add_submenu_page( 'tools.php' , __('Overview', 'nggallery'), __('Overview', 'nggallery'), 'NextGEN Gallery overview', NGGFOLDER, array (&$this, 'show_menu'));
+	    add_submenu_page( 'tools.php' , __('Manage Galleries', 'nggallery'), __('Manage Galleries', 'nggallery'), 'NextGEN Manage gallery', 'nggallery-manage-gallery', array (&$this, 'show_menu'));
+	    add_submenu_page( 'tools.php' , _n( 'Manage Albums', 'Albums', 1, 'nggallery' ), _n( 'Manage Albums', 'Manage Albums', 1, 'nggallery' ), 'NextGEN Edit album', 'nggallery-manage-album', array (&$this, 'show_menu'));
+	    add_submenu_page( 'tools.php' , __('Manage Tags', 'nggallery'), __('Manage Tags', 'nggallery'), 'NextGEN Manage tags', 'nggallery-tags', array (&$this, 'show_menu'));
+		}
+		//added by szilard - END
 
 		//register the column fields
 		$this->register_columns();
@@ -182,6 +193,7 @@ class nggAdminPanel{
 
     	global $wp_admin_bar;
 
+	  if ( current_user_can('manage_options') ) { //IF added by szilard
     	$wp_admin_bar->add_menu( array( 'id' => 'ngg-menu', 'title' => __( 'Gallery' ), 'href' => admin_url('admin.php?page='. NGGFOLDER) ) );
         $wp_admin_bar->add_menu( array( 'parent' => 'ngg-menu', 'id' => 'ngg-menu-overview', 'title' => __('Overview', 'nggallery'), 'href' => admin_url('admin.php?page='. NGGFOLDER) ) );
         if ( current_user_can('NextGEN Upload images') )
@@ -192,6 +204,22 @@ class nggAdminPanel{
             $wp_admin_bar->add_menu( array( 'parent' => 'ngg-menu', 'id' => 'ngg-menu-manage-album', 'title' => _n( 'Manage Albums', 'Manage Albums', 1, 'nggallery' ), 'href' => admin_url('admin.php?page=nggallery-manage-album') ) );
         if ( current_user_can('NextGEN Manage tags') )
             $wp_admin_bar->add_menu( array( 'parent' => 'ngg-menu', 'id' => 'ngg-menu-tags', 'title' => __('Manage Tags', 'nggallery'), 'href' => admin_url('admin.php?page=nggallery-tags') ) );
+	  //added by szilard - BEGIN
+	  }
+	  else {
+	    //error_log("mi az abra:".current_user_can('NextGEN Manage gallery'));
+    	$wp_admin_bar->add_menu( array( 'id' => 'ngg-menu', 'title' => __( 'Gallery' ), 'href' => admin_url('tools.php?page='. NGGFOLDER) ) );
+        $wp_admin_bar->add_menu( array( 'parent' => 'ngg-menu', 'id' => 'ngg-menu-overview', 'title' => __('Overview', 'nggallery'), 'href' => admin_url('tools.php?page='. NGGFOLDER) ) );
+        if ( current_user_can('NextGEN Upload images') )
+            $wp_admin_bar->add_menu( array( 'parent' => 'ngg-menu', 'id' => 'ngg-menu-add-gallery', 'title' => __('Add Gallery / Images', 'nggallery'), 'href' => admin_url('admin.php?page=ngg_addgallery') ) );
+        if ( current_user_can('NextGEN Manage gallery') )
+            $wp_admin_bar->add_menu( array( 'parent' => 'ngg-menu', 'id' => 'ngg-menu-manage-gallery', 'title' => __('Manage Galleries', 'nggallery'), 'href' => admin_url('tools.php?page=nggallery-manage-gallery') ) );
+        if ( current_user_can('NextGEN Edit album') )
+            $wp_admin_bar->add_menu( array( 'parent' => 'ngg-menu', 'id' => 'ngg-menu-manage-album', 'title' => _n( 'Manage Albums', 'Manage Albums', 1, 'nggallery' ), 'href' => admin_url('tools.php?page=nggallery-manage-album') ) );
+        if ( current_user_can('NextGEN Manage tags') )
+            $wp_admin_bar->add_menu( array( 'parent' => 'ngg-menu', 'id' => 'ngg-menu-tags', 'title' => __('Manage Tags', 'nggallery'), 'href' => admin_url('tools.php?page=nggallery-tags') ) );
+	  }
+	  //added by szilard - END
     }
 
     // show the network page

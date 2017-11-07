@@ -3,6 +3,9 @@
 </div>
 <p>
     <input type="checkbox" id="import_keep_location" name="keep_location" value="on" /> <label for="import_keep_location"> <?php esc_html_e('Keep images in original location.', 'nggallery'); ?> <span style="font-size: 85%"><?php esc_html_e('Caution: If you keep images in the original folder and later delete the gallery, the images in that folder might be deleted depending on your settings.', 'nggallery'); ?></span></label><br/><br/>
+	<!-- added by Szilard - BEGIN -->
+    <input type="checkbox" id="scan_sub_folders" name="sub_folders_location" value="on" /> <label for="scan_sub_folders"> <?php esc_html_e('Scan sub-folders and create individual galleries from them.', 'nggallery'); ?> </label><br/><br/>
+	<!-- added by Szilard - END -->
     <input type="button" id="import_button" name="import_folder" value="<?php _e('Import Folder', 'nggallery'); ?>" class="button-primary"/>
 </p>
 <script type="text/javascript">
@@ -33,31 +36,66 @@
         // Import the folder
         $('#import_button').click(function(e){
             e.preventDefault();
-
-            // Show progress bar
-            var progress_bar =  $.nggProgressBar({
-                title: '<?php _e("Importing gallery", 'nggallery'); ?>',
-                infinite: true,
-                starting_value: '<?php _e('In Progress...', 'nggallery'); ?>'
-            });
-
-            // Start importing process
-            var post_params = {
-                action: 'import_folder',
-                folder: selected_folder,
-                keep_location: $('#import_keep_location').is(":checked") ? 'on' : 'off'
-            };
-            $.post(photocrati_ajax.url, post_params, function(response){
-                if (typeof(response) != 'object') response = JSON.parse(response);
-                if (typeof(response.error) == 'string') {
-                    progress_bar.set(response.error);
-                }
-                else {
-                    var message = "<?php __('Done! Successfully imported %s images', 'nggallery'); ?>";
-                    progress_bar.set(message.replace('%s', response.image_ids.length));
-                }
-                progress_bar.close(2000);
-            });
+			
+			if ( $('#scan_sub_folders').is(":checked") ) {
+				//alert('scaning sub-folders');
+				
+				$('#file_browser a[rel="'+selected_folder+'"]').closest('.jqueryFileTree').find('li > a').each( function() {
+					selected_folder = $(this).attr('rel');
+					
+					// Show progress bar
+					var progress_bar =  $.nggProgressBar({
+						title: '<?php _e("Importing gallery", 'nggallery'); ?>',
+						infinite: true,
+						starting_value: '<?php _e('In Progress...', 'nggallery'); ?>'
+					});
+		
+					// Start importing process
+					var post_params = {
+						action: 'import_folder',
+						folder: selected_folder,
+						keep_location: $('#import_keep_location').is(":checked") ? 'on' : 'off'
+					};
+					$.post(photocrati_ajax.url, post_params, function(response){
+						if (typeof(response) != 'object') response = JSON.parse(response);
+						if (typeof(response.error) == 'string') {
+							progress_bar.set(response.error);
+						}
+						else {
+							var message = "<?php __('Done! Successfully imported %s images', 'nggallery'); ?>";
+                    		progress_bar.set(message.replace('%s', response.image_ids.length));
+						}
+						progress_bar.close(2000);
+					});
+				});
+			}
+			else { //this is the original code of NGG - Szilard
+				//alert('original');
+				
+				// Show progress bar
+				var progress_bar =  $.nggProgressBar({
+					title: "Importing gallery",
+					infinite: true,
+					starting_value: 'In Progress...'
+				});
+	
+				// Start importing process
+				var post_params = {
+					action: 'import_folder',
+					folder: selected_folder,
+					keep_location: $('#import_keep_location').is(":checked") ? 'on' : 'off'
+				};
+				$.post(photocrati_ajax.url, post_params, function(response){
+					if (typeof(response) != 'object') response = JSON.parse(response);
+					if (typeof(response.error) == 'string') {
+						progress_bar.set(response.error);
+					}
+					else {
+						progress_bar.set('Done! Successfully imported '+response.image_ids.length+' images.');
+					}
+					progress_bar.close(2000);
+				});
+			}
         })
     });
 </script>

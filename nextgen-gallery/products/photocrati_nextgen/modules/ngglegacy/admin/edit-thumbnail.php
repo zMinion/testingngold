@@ -12,6 +12,8 @@ Credits:
  
 **/
 
+@ini_set('log_errors',0); //added by Szilard
+@ini_set('display_errors',0); //added by Szilard
 require_once( dirname( dirname(__FILE__) ) . '/ngg-config.php');
 require_once( NGGALLERY_ABSPATH . '/lib/image.php' );
 

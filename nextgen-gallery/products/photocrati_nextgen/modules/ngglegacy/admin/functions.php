@@ -10,6 +10,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
  *
  * @access public
  */
+if ( !class_exists('nggAdmin') ) { //if added by Szilard
 class nggAdmin{
 
 	/**
@@ -1235,6 +1236,7 @@ class nggAdmin{
 	}
 
 } // END class nggAdmin
+}
 
 /**
  * TODO: Cannot be member of a class ? Check PCLZIP later...
@@ -1243,8 +1245,10 @@ class nggAdmin{
  * @param mixed $p_header
  * @return
  */
+if ( !function_exists('ngg_getOnlyImages') ) { //if added by Szilard
 function ngg_getOnlyImages($p_event, &$p_header)	{
 	return nggAdmin::getOnlyImages($p_event, $p_header);
+}
 }
 
 /**
@@ -1254,6 +1258,7 @@ function ngg_getOnlyImages($p_event, &$p_header)	{
  * @param mixed $p_header
  * @return 1
  */
+if ( !function_exists('ngg_checkExtract') ) { //if added by Szilard
 function ngg_checkExtract($p_event, &$p_header)	{
 
     // look for valid extraction
@@ -1265,8 +1270,10 @@ function ngg_checkExtract($p_event, &$p_header)	{
 
     return 1;
 }
+}
 
 // XXX temporary...used as a quick fix to refresh I_Settings_Manager when the nextgen option is updated manually in order to run Hooks etc.
+if ( !function_exists('ngg_refreshSavedSettings') ) { //if added by Szilard
 function ngg_refreshSavedSettings()
 {
 	if (class_exists('C_Component_Registry'))
@@ -1292,5 +1299,6 @@ function ngg_refreshSavedSettings()
 	}
 
 	return false;
+}
 }
 ?>

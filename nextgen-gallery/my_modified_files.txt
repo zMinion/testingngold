@@ -1,0 +1,11 @@
+products/photocrati_nextgen/modules/ngglegacy/admin/manage.php
+products/photocrati_nextgen/modules/ngglegacy/admin/functions.php
+products/photocrati_nextgen/modules/ngglegacy/admin/edit-thumbnail.php
+
+products/photocrati_nextgen/modules/ngglegacy/admin/admin.php	#add_submenu_page for Editors
+
+####get_page() to get_pages(array('post_type' => 'dv2_album', 'posts_per_page' => -1, 'post_status' => 'any'))
+
+products/photocrati_nextgen/modules/nextgen_addgallery_page/templates/import_folder.php  ##importing module modified to work on sub-folders
+
+products/photocrati_nextgen/modules/nextgen_data/class.ngglegacy_gallerystorage_driver.php	 ##get_image_url() URL to local

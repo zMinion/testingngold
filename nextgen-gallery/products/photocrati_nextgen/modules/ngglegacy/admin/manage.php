@@ -529,7 +529,8 @@ class nggManageGallery {
 
 	function render_gallery_link_to_page_field($gallery)
 	{
-		$pages = get_pages();
+		//$pages = get_pages(); //modified by Szilard
+		$pages = get_posts(array('post_type' => 'dv2_album', 'posts_per_page' => -1, 'post_status' => 'any'));
 		include('templates/manage_gallery/gallery_link_to_page_field.php');
 	}
 
@@ -544,7 +545,8 @@ class nggManageGallery {
 
 	function render_gallery_create_page_field($gallery)
 	{
-		$pages = get_pages();
+		//$pages = get_pages(); //modified by Szilard
+		$pages = get_posts(array('post_type' => 'dv2_album', 'posts_per_page' => -1, 'post_status' => 'any'));
 		include('templates/manage_gallery/gallery_create_page_field.php');
 	}
 
@@ -858,12 +860,14 @@ class nggManageGallery {
 
 			// Create a WP page
 			global $user_ID;
-
-			$page['post_type']    = 'page';
+			
+			$page['post_excerpt']    = stripslashes($_POST['gallerydesc']); //added by Szilard
+			
+			$page['post_type']    = 'dv2_album'; //'page'; //modified by Szilard
 			$page['post_content'] = '[nggallery id=' . $this->gid . ']';
 			$page['post_parent']  = $parent_id;
 			$page['post_author']  = $user_ID;
-			$page['post_status']  = 'publish';
+			$page['post_status']  = 'draft'; //'publish'; //modified by Szilard
 			$page['post_title']   = $gallery_title == '' ? $gallery_name : $gallery_title;
 			$page = apply_filters('ngg_add_new_page', $page, $this->gid);
 
@@ -872,6 +876,12 @@ class nggManageGallery {
 				$result = $wpdb->query("UPDATE $wpdb->nggallery SET title= '$gallery_title', pageid = '$gallery_pageid' WHERE gid = '$this->gid'");
 				wp_cache_delete($this->gid, 'ngg_gallery');
                 nggGallery::show_message( __('New gallery page ID','nggallery'). ' ' . $gallery_pageid . ' -> <strong>' . $gallery_title . '</strong> ' .__('created','nggallery') );
+				
+				update_post_meta($gallery_pageid, 'ecpt_galleryid', $this->gid); //added by Szilard
+				
+				$_POST['pageid'] = $gallery_pageid; //added by Szilard
+				//this hook was added by Szilard
+				do_action('ngg_update_gallery_only_featured_image', $this->gid, $_POST); //added by Szilard
 			}
 
             do_action('ngg_gallery_addnewpage', $this->gid);
